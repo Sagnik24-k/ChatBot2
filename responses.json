@@ -1,0 +1,73 @@
+{
+  "intents": [
+    {
+      "tag": "greeting",
+      "patterns": [
+        "Hi",
+        "Hey",
+        "How are you",
+        "Is anyone there?",
+        "Hello",
+        "Good day"
+      ],
+      "responses": [
+        "Hey :)",
+        "Hello, thanks for visiting",
+        "Hi there!",
+        "Nice to see you again",
+        "Hi there, how can I help?"
+      ]
+    },
+    {
+      "tag": "goodbye",
+      "patterns": [
+        "Bye",
+        "See you later",
+        "Goodbye",
+        "Nice talking to you",
+        "Till next time"
+      ],
+      "responses": [
+        "Bye! Come back again soon.",
+        "See you around!",
+        "Happy to help!",
+        "Bye for now!"
+      ]
+    },
+    {
+      "tag": "thanks",
+      "patterns": [
+        "Thanks",
+        "Thank you",
+        "That's helpful",
+        "Thank's a lot!"
+      ],
+      "responses": [
+        "Happy to help!",
+        "Any time!",
+        "My pleasure"
+      ]
+    },
+    {
+      "tag": "default",
+      "patterns": [],
+      "responses": [
+        "I'm not sure how to respond to that. Can you ask differently?",
+        "Please tell me more.",
+        "I'm still learning. Could you rephrase?",
+        "Hmm, I don't have information on that at the moment."
+      ]
+    },
+    {
+      "tag": "name",
+      "patterns": [
+        "what is your name",
+        "your name",
+        "who are you"
+      ],
+      "responses": [
+        "My name is Jarvis"
+      ]
+    }
+  ]
+}

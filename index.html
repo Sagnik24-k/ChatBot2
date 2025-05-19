@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyBot Chat & Book Review</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for Inter font */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Style for chat messages */
+        .chat-message {
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            max-width: 80%; /* Limit message width */
+            word-wrap: break-word; /* Break long words */
+        }
+        .user-message {
+            background-color: #dbeafe; /* Light blue */
+            align-self: flex-end; /* Align user messages to the right */
+            margin-left: auto;
+        }
+        .bot-message {
+            background-color: #e5e7eb; /* Light gray */
+            align-self: flex-start; /* Align bot messages to the left */
+            margin-right: auto;
+        }
+        /* Style for book review messages */
+         .book-review-message {
+            background-color: #d1fae5; /* Light green */
+            align-self: flex-start; /* Align to the left */
+            margin-right: auto;
+            border-left: 4px solid #10b981; /* Green border for visual distinction */
+            padding-left: 1rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-2xl flex flex-col h-[90vh]">
+        <h1 class="text-2xl font-bold mb-4 text-center text-gray-800">StudyBot Chat & Book Review</h1>
+
+        <div id="chatBox" class="flex-grow overflow-y-auto border border-gray-300 rounded-lg p-4 mb-4 flex flex-col space-y-4">
+            <div class="bot-message chat-message">StudyBot: Hello! I'm your friendly study chatbot. Ask me anything, or type 'Book review' to get details about a book.</div>
+        </div>
+
+        <div class="flex mb-4">
+            <input
+                type="text"
+                id="chatInput"
+                class="flex-grow shadow appearance-none border rounded-l-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Type your message here..."
+                onkeypress="handleKeyPress(event)"
+            >
+            <button
+                id="sendButton"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-r-lg focus:outline-none focus:shadow-outline transition duration-300 ease-in-out"
+            >
+                Send
+            </button>
+        </div>
+
+        <p class="text-gray-600 mb-2 text-center">Or use the dedicated section for book reviews:</p>
+        <div class="mb-4 flex">
+            <input
+                type="text"
+                id="bookTitleInput"
+                class="flex-grow shadow appearance-none border rounded-l-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500"
+                placeholder="Enter book title for review..."
+            >
+            <button
+                id="fetchBookButton"
+                class="bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-r-lg focus:outline-none focus:shadow-outline transition duration-300 ease-in-out"
+            >
+                Get Book Review
+            </button>
+        </div>
+
+        <div id="loadingIndicator" class="mt-2 text-center text-blue-600 hidden">
+            Processing...
+        </div>
+
+    </div>
+
+    <script>
+        // Get references to HTML elements
+        const chatBox = document.getElementById('chatBox');
+        const chatInput = document.getElementById('chatInput');
+        const sendButton = document.getElementById('sendButton');
+        const bookTitleInput = document.getElementById('bookTitleInput');
+        const fetchBookButton = document.getElementById('fetchBookButton');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+
+        // Backend API endpoint URL
+        // IMPORTANT: Make sure this matches the address and port your Flask app is running on
+        const API_URL = 'http://127.0.0.1:5000/';
+
+        // Function to add a message to the chat box
+        // senderType: 'user' or 'bot'
+        // messageType: 'chat' or 'book_review' (used for styling)
+        function addMessageToChat(message, senderType, messageType = 'chat') {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('chat-message', `${senderType}-message`);
+
+            // Add specific class for book reviews and handle newlines
+            if (messageType === 'book_review') {
+                 messageElement.classList.add('book-review-message');
+                 // Replace newline characters with <br> for HTML display
+                 messageElement.innerHTML = `<strong>Book Review:</strong> ${message.replace(/\n/g, '<br>')}`;
+            } else {
+                 messageElement.textContent = message;
+            }
+
+            chatBox.appendChild(messageElement);
+            // Auto-scroll to the bottom of the chat box
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Function to send a message to the backend API
+        // message: the user's chat input (can be empty for book review requests from dedicated input)
+        // bookTitle: the book title (only used for book review requests)
+        async function sendMessage(message, bookTitle = null) {
+            // Don't send if both message and bookTitle are empty
+            if (!message && !bookTitle) return;
+
+            // Show loading indicator
+            loadingIndicator.classList.remove('hidden');
+
+            try {
+                // Construct the request body
+                const requestBody = { message: message };
+                if (bookTitle) {
+                     requestBody.book_title = bookTitle;
+                     // If it's a book review request from the dedicated input,
+                     // set the message to "Book review" so the backend knows how to handle it.
+                     // If the user typed "Book review" in the main chat, the message will already be set.
+                     if (message.toLowerCase() !== "book review") {
+                          requestBody.message = "Book review";
+                     }
+                }
+
+                // Send the POST request to the backend
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestBody),
+                });
+
+                // Check if the response is OK (status code 200-299)
+                if (!response.ok) {
+                     throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                // Parse the JSON response
+                const data = await response.json();
+
+                // Hide loading indicator
+                loadingIndicator.classList.add('hidden');
+
+                // Add the bot's response to the chat box
+                // Use data.type to determine if it's a book review for styling
+                addMessageToChat(`StudyBot: ${data.response}`, 'bot', data.type);
+
+            } catch (error) {
+                console.error('Error sending message:', error);
+                // Hide loading indicator
+                loadingIndicator.classList.add('hidden');
+                // Display an error message in the chat box
+                addMessageToChat(`StudyBot: Sorry, I couldn't get a response from the server. Error: ${error.message}`, 'bot');
+            }
+        }
+
+        // Event listener for the general chat send button
+        sendButton.addEventListener('click', () => {
+            const userMessage = chatInput.value.trim();
+            if (userMessage) {
+                // Add user's message to the chat box
+                addMessageToChat(`You: ${userMessage}`, 'user');
+                // Send the message to the backend
+                sendMessage(userMessage);
+                // Clear the chat input field
+                chatInput.value = '';
+            }
+        });
+
+        // Allow sending message by pressing Enter in the general chat input
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Prevent default form submission
+                sendButton.click(); // Trigger the send button click event
+            }
+        }
+
+        // Event listener for the dedicated book review button
+        fetchBookButton.addEventListener('click', () => {
+            const bookTitle = bookTitleInput.value.trim();
+            if (bookTitle) {
+                // Add user's request to the chat box
+                addMessageToChat(`You: Requesting book review for "${bookTitle}"`, 'user');
+                // Send the "Book review" command and the book title to the backend
+                sendMessage("Book review", bookTitle);
+                // Clear the book title input field
+                bookTitleInput.value = '';
+            } else {
+                // Alert the user if the book title input is empty
+                alert("Please enter a book title for the review.");
+            }
+        });
+
+        // Attach the keypress handler to the general chat input
+        chatInput.addEventListener('keypress', handleKeyPress);
+
+    </script>
+</body>
+</html>
