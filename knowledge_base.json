@@ -1,0 +1,69 @@
+ {
+  "intents": [
+    {
+      "tag": "greeting",
+      "patterns": ["hello", "hi", "hey", "good morning", "good afternoon", "sup", "what's up"],
+      "responses": ["Hello there! I'm your study assistant. Ask me anything!", "Hi! Ready to study?", "Hey! What can I help you with today?"]
+    },
+    {
+      "tag": "goodbye",
+      "patterns": ["bye", "quit", "exit", "see you later", "goodbye", "I'm done", "offline"],
+      "responses": ["Goodbye! Keep up the great studying!", "Goodbye! Hope I was helpful.", "See you next time! Study hard!"]
+    },
+    {
+      "tag": "thanks",
+      "patterns": ["thanks", "thank you", "cool thanks", "thx", "much appreciated"],
+      "responses": ["You're welcome!", "Happy to help!", "Any time! Let me know if you have more questions."]
+    },
+    {
+      "tag": "about_bot",
+      "patterns": ["who are you", "what are you", "your name"],
+      "responses": ["I am a humble study chatbot, here to help you with your questions!", "You can call me StudyBot. I'm designed to assist with your study topics based on my knowledge base."]
+    },
+    {
+      "tag": "python_definition",
+      "patterns": ["what is python", "define python", "tell me about python language", "python overview"],
+      "responses": ["Python is a high-level, interpreted programming language known for its readability, versatility, and extensive libraries."]
+    },
+    {
+      "tag": "python_data_types",
+      "patterns": ["python data types", "data types in python", "list python types", "common python types"],
+      "responses": ["Common Python data types include integers (int), floating-point numbers (float), strings (str), lists (list), tuples (tuple), dictionaries (dict), and booleans (bool)."]
+    },
+    {
+      "tag": "python_variable",
+      "patterns": ["define variable python", "python variable", "what is a variable in python", "how do variables work python"],
+      "responses": ["In Python, a variable is a symbolic name that acts as a reference or pointer to an object in memory. Once an object is assigned to a variable, you can refer to the object by that name."]
+    },
+    {
+      "tag": "python_list",
+      "patterns": ["python list", "list in python", "what is a list python", "explain python lists"],
+      "responses": ["A list in Python is an ordered, mutable (changeable) collection of items, which can be of different types. Lists are defined using square brackets []. Example: `my_list = [1, 'hello', 3.14]`."]
+    },
+    {
+      "tag": "python_dictionary",
+      "patterns": ["python dictionary", "dictionary in python", "what is a dictionary python", "explain python dict"],
+      "responses": ["A dictionary in Python is an unordered collection of key-value pairs. Dictionaries are mutable and are defined using curly braces {}. Keys must be unique and immutable. Example: `my_dict = {'name': 'StudyBot', 'type': 'assistant'}`."]
+    },
+    {
+      "tag": "capital_france",
+      "patterns": ["capital of france", "france capital", "what is the main city of france"],
+      "responses": ["The capital of France is Paris."]
+    },
+    {
+      "tag": "capital_japan",
+      "patterns": ["capital of japan", "japan capital", "main city japan"],
+      "responses": ["The capital of Japan is Tokyo."]
+    },
+    {
+      "tag": "capital_india",
+      "patterns": ["capital of india", "india capital", "what is capital new delhi"],
+      "responses": ["The capital of India is New Delhi."]
+    },
+    {
+      "tag": "default",
+      "patterns": [],
+      "responses": ["Sorry, I don't have information on that specific topic yet. Could you try asking in a different way?", "I'm not sure I understand that. Can you rephrase your question?", "My knowledge is limited. Try asking about the topics I've been trained on."]
+    }
+  ]
+}
